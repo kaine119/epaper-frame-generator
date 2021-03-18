@@ -46,7 +46,7 @@ text_draw.annotate(composite, 50, 50, 140, -105, ampm) {
 
 # Weather
 weather = Weather.today
-weather_icon_path = "weather_icons/#{weather.outlook['code']}_#{weather_day? ? 'day' : 'night'}.bmp"
+weather_icon_path = "weather_icons/#{weather.outlook['code']}_#{weather.day? ? 'day' : 'night'}.bmp"
 weather_icon = Magick::Image.read(weather_icon_path).first
                             .resize_to_fit(80, 80)
 composite.composite!(weather_icon, 210, 30, Magick::SrcOverCompositeOp)

@@ -5,7 +5,7 @@ require 'date'
 
 class Weather < Struct.new(:outlook, :temperature, :precipitation_chances, :haze?, :day?)
   HOSTNAME = "https://api.weatherapi.com/v1"
-  API_KEY = "4fff719640f24335818132621211803"
+  API_KEY = File.open("config/weather.token").read().strip
 
   def self.today
     query = URI.encode_www_form({
