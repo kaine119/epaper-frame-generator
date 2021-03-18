@@ -45,19 +45,20 @@ text_draw.annotate(composite, 50, 50, 140, -105, ampm) {
 }
 
 # Weather
-weather = Weather.new(:tstorms, 31, [79, 50, 25])
+weather = Weather.today
+weather_icon_path = "weather_icons/#{weather.outlook['code']}_#{weather_day? ? 'day' : 'night'}.bmp"
+weather_icon = Magick::Image.read(weather_icon_path).first
+                            .resize_to_fit(80, 80)
+composite.composite!(weather_icon, 210, 30, Magick::SrcOverCompositeOp)
 
-tstorms_image = Magick::Image.read('weather_icons/tstorms.bmp').first
-                             .resize_to_fit(80, 80)
-composite.composite!(tstorms_image, 220, 30, Magick::SrcOverCompositeOp)
-
-text_draw.annotate(composite, 0, 0, 310, 25, weather.temperature.to_s) {
+text_draw.annotate(composite, 110, 70, 300, 25, weather.temperature.to_s) {
   self.gravity = Magick::NorthWestGravity
-  self.pointsize = 75
+  self.pointsize = 65
   self.font_family = 'Montserrat'
 }
 
-text_draw.annotate(composite, 0, 0, 375, 57, "°C") {
+text_draw.annotate(composite, 50, 40, 375, 30, "°C") {
+  self.gravity = Magick::NorthGravity
   self.pointsize = 40
   self.font_family = 'Montserrat'
 }
@@ -67,6 +68,7 @@ weather.precipitation_chances
   .map { |s| s.to_s + '%' }
   .each.with_index do |precipitation, i|
     text_draw.annotate(composite, 0, 0, 215 + 75 * i, 110, precipitation) {
+      self.gravity = Magick::NorthWestGravity
       self.pointsize = 30
       self.font_family = 'Montserrat'
 
@@ -92,7 +94,7 @@ text_draw.annotate(composite, 0, 0, 260, 160, "chance of rain") {
 }
 
 # XKCD
-xkcd = XKCD.by_number(2000)
+xkcd = XKCD.latest
 xkcd_blob = xkcd.image
 
 xkcd_image = Magick::Image.from_blob(xkcd_blob).first
