@@ -12,8 +12,6 @@ composite = Magick::Image.read("template.bmp").first
 # date
 now = DateTime.now
 year, month, day, timestring, ampm = %w[%Y %b %-d %-l:%M %-P].map { |s| now.strftime(s).downcase }
-#year, month, day, timestring, ampm = %w[2021 oct 31 12:48 pm]
-p year, month, day, timestring, ampm
 
 text_draw = Magick::Draw.new
 text_draw.text_antialias = false
@@ -132,21 +130,11 @@ text_draw.annotate(composite, 420, 100, 10, 473, wrapper.wrap) {
 }
 
 # calendar
-events = {
-  DateTime.parse('2021-03-18') => [
-    Calendar::Event.new(DateTime.parse('2021-03-18 10:00pm'), "Run"),
-  ],
-  DateTime.parse('2021-03-19') => [
-    Calendar::Event.new(DateTime.parse('2021-03-19 12:00pm'), "Lunch with Jade"),
-    Calendar::Event.new(DateTime.parse('2021-03-19 1:00pm'), "10.002 Design in our world"),
-  ]
-}
-
-p events
+events = Calendar::Calendar.new.fetch_events(12)
 
 4.times do |i|
   day = (now + i).to_date
-  text_draw.annotate(composite, 110, 132, 440, 132 * i, day.strftime("%a")) {
+  text_draw.annotate(composite, 110, 132, 440, 132 * i, day.strftime("%a").downcase) {
     self.gravity = Magick::CenterGravity
     self.pointsize = 30
     self.font_family = 'Montserrat'
@@ -159,22 +147,29 @@ p events
 
   begin
     events.fetch(day).first(3).each.with_index do |event, j|
-      text_draw.annotate(composite, 105, 132, -550 + -110 * j, 132 * i, event.datetime.strftime('%-I %P')) {
+      text_draw.annotate(composite,
+                         105,
+                         132,
+                         -550 + -110 * j,
+                         132 * i,
+                         if event.allday? 
+                            "allday" 
+                         else 
+                           event.datetime.strftime('%-I%P')
+                         end) {
         self.fill = 'black'
         self.gravity = Magick::NorthEastGravity
         self.pointsize = 30
       }
       title_wrapper = WordWrapper.new(event.title, 105, 'Montserrat', 20, Magick::NorthEastGravity)
-      p title_wrapper.wrap
-      text_draw.annotate(composite, 105, 132, -550 + -110 * j, 132 * i + 35, title_wrapper.wrap) {
+      text_draw.annotate(composite, 105, 132, -550 + -110 * j, 132 * i + 35, title_wrapper.wrap.downcase) {
         self.fill = 'black'
         self.gravity = Magick::NorthEastGravity
         self.pointsize = 20
       }
     end
   rescue KeyError
-    p 'no event'
-    text_draw.annotate(composite, 330, 132, 550, 132 * i, 'Nothing for today') {
+    text_draw.annotate(composite, 330, 132, 550, 132 * i, 'nothing scheduled') {
       self.gravity = Magick::CenterGravity
       self.pointsize = 25
       self.undercolor = 'white'
