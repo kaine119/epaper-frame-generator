@@ -124,7 +124,7 @@ text_draw.annotate(composite, 420, 100, 10, 473, wrapper.wrap) {
 }
 
 # calendar
-events = Calendar::Calendar.new.fetch_events(12)
+events = Calendar::API.new.fetch_events(12)
 
 4.times do |i|
   day = (now + i).to_date

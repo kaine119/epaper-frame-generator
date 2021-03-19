@@ -16,7 +16,7 @@ module Calendar
   class Event < Struct.new(:datetime, :title, :allday?)
   end
 
-  class Calendar
+  class API
     def self.authorize
       client_id = Google::Auth::ClientId.from_file CREDENTIALS_PATH
       token_store = Google::Auth::Stores::FileTokenStore.new file: TOKEN_PATH
@@ -38,7 +38,7 @@ module Calendar
     def initialize
       @service = Google::Apis::CalendarV3::CalendarService.new
       @service.client_options.application_name = APPLICATION_NAME
-      @service.authorization = Calendar.authorize
+      @service.authorization = API.authorize
       puts "authorized"
     end
 
