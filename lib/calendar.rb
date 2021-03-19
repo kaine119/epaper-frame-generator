@@ -54,8 +54,24 @@ module Calendar
                                      max_results: n,
                                      single_events: true,
                                      order_by: "startTime",
-                                     time_min: DateTime.now.rfc3339).items
+                                     time_min: DateTime.now.to_date.rfc3339).items
       end
+      events = {}
+      items.each do |item|
+        date = (item.start.date_time || item.start.date).to_date
+        events[date] ||= []
+        events[date] << Event.new(item.start.date_time || item.start.date, item.summary, item.start.date_time.nil?)
+      end
+      events
+    end
+
+    def fetch_holidays(n_days)
+      items = @service.list_events("en.singapore#holiday@group.v.calendar.google.com",
+                           max_results: n_days,
+                           single_events: true,
+                           order_by: "startTime",
+                           #time_min: DateTime.now.to_date.rfc3339).items
+                           time_min: "2021-04-02T00:00:00+08:00").items
       events = {}
       items.each do |item|
         date = (item.start.date_time || item.start.date).to_date

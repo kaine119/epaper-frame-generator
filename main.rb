@@ -124,20 +124,43 @@ text_draw.annotate(composite, 420, 100, 10, 473, wrapper.wrap) {
 }
 
 # calendar
-events = Calendar::API.new.fetch_events(12)
+api = Calendar::API.new
+events = api.fetch_events(12)
+holidays = api.fetch_holidays(8)
 
 4.times do |i|
   day = (now + i).to_date
-  text_draw.annotate(composite, 110, 132, 440, 132 * i, day.strftime("%a").downcase) {
-    self.gravity = Magick::CenterGravity
-    self.pointsize = 30
-    self.font_family = 'Montserrat'
-    self.fill = if i == 0
-                  "red"
-                else
-                  "black"
-                end
-  }
+  if holidays[day].nil?
+    text_draw.annotate(composite, 110, 132, 440, 132 * i, day.strftime("%a").downcase) {
+      self.gravity = Magick::CenterGravity
+      self.pointsize = 30
+      self.font_family = 'Montserrat'
+      self.fill = if i == 0
+                    "red"
+                  else
+                    "black"
+                  end
+    }
+  else
+    text_draw.annotate(composite, 110, 132, 440, -132 * i + 66, day.strftime("%a").downcase) {
+      p day.strftime("%a")
+      self.gravity = Magick::SouthGravity
+      self.pointsize = 30
+      self.font_family = 'Montserrat'
+      self.fill = if i == 0
+                    "red"
+                  else
+                    "black"
+                  end
+    }
+    wrapper = WordWrapper.new(holidays[day].first.title, 100, 'Montserrat', 16, Magick::NorthGravity)
+    text_draw.annotate(composite, 110, 132, 440, 132 * i + 66, wrapper.wrap) {
+      self.gravity = Magick::NorthGravity
+      self.pointsize = 16
+      self.font_family = 'Montserrat'
+      self.fill = "black"
+    }
+  end
 
   begin
     events.fetch(day).first(3).each.with_index do |event, j|
