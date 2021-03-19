@@ -44,10 +44,10 @@ text_draw.annotate(composite, 50, 50, 140, -105, ampm) {
 
 # Weather
 weather = Weather.today
-weather_icon_path = "weather_icons/#{weather.outlook['code']}_#{weather.day? ? 'day' : 'night'}.bmp"
+weather_icon_path = "weather_icons/#{weather.outlook.fetch("icon")}.bmp"
 weather_icon = Magick::Image.read(weather_icon_path).first
-                            .resize_to_fit(80, 80)
-composite.composite!(weather_icon, 210, 30, Magick::SrcOverCompositeOp)
+                            .resize_to_fit(100, 100)
+composite.composite!(weather_icon, 200, 15, Magick::SrcOverCompositeOp)
 
 text_draw.annotate(composite, 110, 70, 300, 25, weather.temperature.to_s) {
   self.gravity = Magick::NorthWestGravity
@@ -62,30 +62,24 @@ text_draw.annotate(composite, 50, 40, 375, 30, "°C") {
 }
 
 # Bold the first one for morning, second one for afternoon, third one for night.
-weather.precipitation_chances
+weather.precipitation_chances.first(3)
   .map { |s| s.to_s + '%' }
-  .each.with_index do |precipitation, i|
+  .each_with_index do |precipitation, i|
     text_draw.annotate(composite, 0, 0, 215 + 75 * i, 110, precipitation) {
       self.gravity = Magick::NorthWestGravity
       self.pointsize = 30
       self.font_family = 'Montserrat'
-
-      case now.hour
-      when (6..12)
-        self.font_weight = if i == 0; Magick::BoldWeight; else; Magick::NormalWeight; end
-      when (12..18)
-        self.font_weight = if i == 1; Magick::BoldWeight; else; Magick::NormalWeight; end
-      when (0..6), (19..24)
-        self.font_weight = if i == 2; Magick::BoldWeight; else; Magick::NormalWeight; end
-      else
-        self.font_weight = Magick::NormalWeight
-      end
+      self.font_weight = if i == 0
+                           Magick::BoldWeight
+                         else
+                           Magick::NormalWeight
+                         end
     }
   end
 
-
-text_draw.annotate(composite, 0, 0, 260, 160, "chance of rain") {
+text_draw.annotate(composite, 220, 50, 210, 160, "chance of rain") {
   self.font_weight = Magick::NormalWeight
+  self.gravity = Magick::NorthGravity
   self.pointsize = 14
   self.font_family = 'Sans-serif'
   self.kerning = 3
