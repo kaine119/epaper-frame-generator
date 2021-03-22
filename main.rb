@@ -18,12 +18,14 @@ text_draw.text_antialias = false
 text_draw.gravity = Magick::NorthWestGravity
 text_draw.font_style = Magick::NormalStyle
 
-text_draw.annotate(composite, 85, 85, 30, 15, day) {
-  self.pointsize = 85
+text_draw.annotate(composite, 85, 85, -33, 25, day) {
+  self.gravity = Magick::EastGravity
+  self.pointsize = 80
   self.font_family = 'Montserrat'
 }
 
 text_draw.annotate(composite, 70, 70, 115, 28, "#{month}\n#{year}") {
+  self.gravity = Magick::NorthWestGravity
   self.pointsize = 35
   self.font_family = 'Montserrat'
   self.interline_spacing = -7.0
