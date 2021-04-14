@@ -6,6 +6,8 @@ require 'generator/xkcd'
 
 module Generator
   class FrameGenerator
+    attr_reader :iamge
+
     def initialize(template)
       @image = template
     end
