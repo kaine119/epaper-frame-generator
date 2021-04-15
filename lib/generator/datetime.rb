@@ -3,8 +3,7 @@ require 'date'
 module Generator
   class DateTimeGenerator
     def self.write_to(image)
-      #now = DateTime.now
-      now = DateTime.new(2021, 4, 14, 17, 01, 00)
+      now = DateTime.now
       year, month, day, timestring, ampm = %w[%Y %b %-d %-l:%M %-P].map { |s| now.strftime(s).downcase }
 
       text_draw = Magick::Draw.new
