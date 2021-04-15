@@ -28,11 +28,15 @@ module Generator
 
       # Bold the first one for morning, second one for afternoon, third one for night.
       weather.precipitation_chances.first(3)
-        .map { |s| s.to_s + '%' }
         .each_with_index do |precipitation, i|
-          text_draw.annotate(image, 0, 0, 215 + 75 * i, 110, precipitation) {
+          text_draw.annotate(image, 0, 0, 215 + 75 * i, 110, precipitation.to_s + "%") {
             self.gravity = Magick::NorthWestGravity
             self.pointsize = 30
+            self.fill = if precipitation > 65
+                          'red'
+                        else
+                          'black'
+                        end
             self.font_family = 'Montserrat'
             self.font_weight = if i == 0
                                  Magick::BoldWeight
@@ -42,11 +46,12 @@ module Generator
           }
         end
 
-      text_draw.annotate(image, 220, 50, 210, 160, "chance of rain") {
+      text_draw.annotate(image, 220, 50, 210, 145, "chance of rain") {
         self.font_weight = Magick::NormalWeight
+        self.fill = 'black'
         self.gravity = Magick::NorthGravity
         self.pointsize = 14
-        self.font_family = 'Sans-serif'
+        self.font_family = 'Montserrat'
         self.kerning = 3
       }
     end
