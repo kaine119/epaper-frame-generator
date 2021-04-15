@@ -3,7 +3,8 @@ require 'date'
 module Generator
   class DateTimeGenerator
     def self.write_to(image)
-      now = DateTime.now
+      #now = DateTime.now
+      now = DateTime.new(2021, 4, 14, 17, 01, 00)
       year, month, day, timestring, ampm = %w[%Y %b %-d %-l:%M %-P].map { |s| now.strftime(s).downcase }
 
       text_draw = Magick::Draw.new
@@ -11,7 +12,7 @@ module Generator
       text_draw.gravity = Magick::NorthWestGravity
       text_draw.font_style = Magick::NormalStyle
 
-      text_draw.annotate(image, 85, 85, -33, 25, day) {
+      text_draw.annotate(image, 80, 85, -33, 25, day) {
         self.gravity = Magick::EastGravity
         self.pointsize = 80
         self.font_family = 'Montserrat'
@@ -24,17 +25,17 @@ module Generator
         self.interline_spacing = -7.0
       }
 
-      text_draw.annotate(image, 90, 50, -52, -110, timestring) {
-        self.interline_spacing = 0
-        self.pointsize = 45
-        self.font_family = 'Montserrat'
-        self.gravity = Magick::SouthEastGravity
-      }
+      greeting_text = "Good\n" + case now.hour
+                                   when (6..12) then "Morning"
+                                   when (12..18) then "Afternoon"
+                                   when (18..20) then "Evening"
+                                   else "Night"
+                                 end
 
-      text_draw.annotate(image, 50, 50, 140, -105, ampm) {
-        self.pointsize = 25
+      text_draw.annotate(image, 200, 45, 30, 110, greeting_text) {
+        self.pointsize = 23
         self.font_family = 'Montserrat'
-        self.gravity = Magick::SouthWestGravity
+        self.gravity = Magick::NorthWestGravity
       }
     end
   end
