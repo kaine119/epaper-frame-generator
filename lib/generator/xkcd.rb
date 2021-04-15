@@ -31,10 +31,11 @@ module Generator
       top = 350 - (xkcd_image.rows / 2)
       image.composite!(xkcd_image, left, top, Magick::SrcOverCompositeOp)
 
-      text_draw.annotate(image, 420, 50, 10, 180, "#{xkcd.comic_number}: #{xkcd.title}") {
+      wrapper = WordWrapper.new("#{xkcd.comic_number}: #{xkcd.title}", 420, 'Montserrat', 25, Magick::NorthGravity)
+      text_draw.annotate(image, 420, 50, 10, 180, wrapper.wrap) {
         self.pointsize = 25
         self.font_family = 'Montserrat'
-        self.gravity = Magick::CenterGravity
+        self.gravity = Magick::NorthGravity
         self.kerning = 0
       }
 
