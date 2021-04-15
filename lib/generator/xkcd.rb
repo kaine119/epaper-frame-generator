@@ -1,4 +1,4 @@
-require 'api/xkcd'
+require 'generator/api/xkcd'
 require 'rmagick'
 
 module Generator

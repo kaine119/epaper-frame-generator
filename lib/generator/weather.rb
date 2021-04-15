@@ -1,4 +1,4 @@
-require 'api/weather'
+require 'generator/api/weather'
 require 'rmagick'
 
 module Generator

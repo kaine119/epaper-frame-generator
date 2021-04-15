@@ -1,6 +1,6 @@
 require 'rmagick'
-require 'api/calendar'
-require 'rmagick-textwrap'
+require 'generator/api/calendar'
+require 'generator/rmagick-textwrap'
 
 module Generator
   class CalendarGenerator
