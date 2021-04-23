@@ -3,7 +3,9 @@
 require 'rmagick'
 require 'generator'
 
-if ARGV.first.nil?
+file_path = ARGV.pop
+
+if file_path.nil?
   puts <<-HELP
     Usage: generate.rb <image-path>
   HELP
@@ -14,4 +16,4 @@ template = Magick::Image.read("template.bmp").first
 
 frame = Generator::FrameGenerator.new(template)
 frame.generate!
-frame.write(ARGV.first)
+frame.write(file_path)
