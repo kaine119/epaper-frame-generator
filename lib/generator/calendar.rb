@@ -13,6 +13,11 @@ module Generator
       text_draw.text_antialias = false
       text_draw.font_style = Magick::NormalStyle
 
+      text_draw.fill = "red"
+      text_draw.fill_opacity 1.0
+      text_draw.rectangle(443, 0, 548, 130)
+      text_draw.draw(image)
+
       4.times do |i|
         day = (now + i).to_date
         if holidays[day].nil?
@@ -21,10 +26,15 @@ module Generator
             self.pointsize = 30
             self.font_family = 'Montserrat'
             self.fill = if i == 0
-                          "red"
+                          "white"
                         else
                           "black"
                         end
+            self.undercolor = if i == 0
+                                "red"
+                              else
+                                "white"
+                              end
           }
         else
           text_draw.annotate(image, 110, 132, 440, -132 * i + 66, day.strftime("%a").downcase) {
@@ -33,16 +43,22 @@ module Generator
             self.pointsize = 30
             self.font_family = 'Montserrat'
             self.fill = if i == 0
-                          "red"
+                          "white"
                         else
                           "black"
                         end
+            self.undercolor = if i == 0
+                                "red"
+                              else
+                                "white"
+                              end
           }
           wrapper = WordWrapper.new(holidays[day].first.title, 100, 'Montserrat', 16, Magick::NorthGravity)
           text_draw.annotate(image, 110, 132, 440, 132 * i + 66, wrapper.wrap) {
             self.gravity = Magick::NorthGravity
             self.pointsize = 16
             self.font_family = 'Montserrat'
+            self.undercolor = "none"
             self.fill = "black"
           }
         end
@@ -60,6 +76,7 @@ module Generator
                                  event.datetime.strftime('%-I%P')
                                end) {
               self.fill = 'black'
+              self.undercolor = 'none'
               self.gravity = Magick::NorthEastGravity
               self.pointsize = 30
             }
@@ -75,11 +92,10 @@ module Generator
             self.gravity = Magick::CenterGravity
             self.pointsize = 25
             self.undercolor = 'white'
+            self.fill = 'black'
           }
         end
       end
-
-
     end
   end
 end
