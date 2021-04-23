@@ -50,16 +50,25 @@ module Calendar
       items = []
       fetch_calendars.each do |calendar|
         items += @service.list_events(calendar.id,
-                                     max_results: n,
-                                     single_events: true,
-                                     order_by: "startTime",
-                                     time_min: DateTime.now.to_date.rfc3339).items
+                                        max_results: n,
+                                        single_events: true,
+                                        order_by: "startTime",
+                                        time_min: DateTime.now.rfc3339
+                                     ).items
       end
       events = {}
       items.each do |item|
-        date = (item.start.date_time || item.start.date).to_date
-        events[date] ||= []
-        events[date] << Event.new(item.start.date_time || item.start.date, item.summary, item.start.date_time.nil?)
+        # if the item is all-day, add item as an all-day event for every day in the event's duration.
+        if item.start.date_time.nil?
+          (item.start.date...item.end.date).each do |date|
+            events[date] ||= []
+            events[date] << Event.new(item.start.date, item.summary, true)
+          end
+        else
+          date = item.start.date_time.to_date
+          events[date] ||= []
+          events[date] << Event.new(item.start.date_time, item.summary, false)
+        end
       end
       events
     end
