@@ -1,4 +1,4 @@
-require 'xkcd'
+require 'generator/api/xkcd'
 require 'date'
 
 describe XKCD do
