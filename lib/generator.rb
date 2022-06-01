@@ -16,7 +16,7 @@ module Generator
       DateTimeGenerator.write_to(@image)
       WeatherGenerator.write_to(@image)
       XKCDGenerator.write_to(@image)
-      CalendarGenerator.write_to(@image)
+      # CalendarGenerator.write_to(@image)
     end
 
     def write(filename)
